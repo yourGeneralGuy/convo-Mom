@@ -25,15 +25,16 @@ def plot_word_frequency(words, top_n=125, corpus_name='Corpus'):
     return plot
 
 
-"""Calculates the lift ratio from a given Pandas Dataframe for specified columns/features within the dataset
 
-Keyword arguments:
-index -- (list) object containing the items/things of interest to calculate the lift ratio on
-data -- (Pandas DataFrame) object with data that has feature/column names that are contained in the 'index' argument
-capture_column -- (variable) column to pull data from
-Return: Pandas DataFrame that displays the lift ratios for the given features
-"""
 def lift_ratio(index : list, data : pd.DataFrame, capture_column : str):
+    """Calculates the lift ratio from a given Pandas Dataframe for specified columns/features within the dataset
+
+    Keyword arguments:
+    index -- (list) object containing the items/things of interest to calculate the lift ratio on
+    data -- (Pandas DataFrame) object with data that has feature/column names that are contained in the 'index' argument
+    capture_column -- (variable) column to pull data from
+    Return: Pandas DataFrame that displays the lift ratios for the given features
+    """
     lift_dict = pd.DataFrame(index=index, columns=index)
     total_shape = data.shape[0]
     for i in range(len(index)):
@@ -71,14 +72,15 @@ def lift_ratio(index : list, data : pd.DataFrame, capture_column : str):
 
 
 
-"""Display a multi-dimensional scaling graph
 
-Keyword arguments:
-mdslifts -- (Pandas DataFrame) object that contains the lift values for features 
-points -- (list) that contains the desired feature names found in the 'mdslifts' (Pandas DataFrame)
-Return: Displays a multi-dimensional scaling graph of the given dataframe's features
-"""
 def multi_dimensional_scaling(mdslifts : pd.DataFrame, points : list):
+    """Display a multi-dimensional scaling graph
+
+    Keyword arguments:
+    mdslifts -- (Pandas DataFrame) object that contains the lift values for features 
+    points -- (list) that contains the desired feature names found in the 'mdslifts' (Pandas DataFrame)
+    Return: Displays a multi-dimensional scaling graph of the given dataframe's features
+    """
     mdslifts.reset_index(drop=True, inplace=True)
     mds = MDS(random_state=0)
     mdslifts = mds.fit_transform(mdslifts)
@@ -102,19 +104,20 @@ def multi_dimensional_scaling(mdslifts : pd.DataFrame, points : list):
     plt.title('mds')
     return plt.show()
 
-"""Applies scalar modification to lift value dataframe to reshape for MDS plot
 
-Keyword arguments:
-df -- (Pandas Dataframe)
-threshold_1 -- (float) value determine which lift value to modify
-threshold_2 -- (float) value determine which lift value to modify
-scale_1 -- (float) value to modify lift value
-scale_2 -- (float) value to modify lift value
-Return: Dataframe with the rescaled/modified lift values
-"""
 # NOTE: Can improve this code by making it able to accept multiple arguments ex. using **args with nested loop of comparison
 # What I mean is take the "If value > threshold: ..." and make it its own function to accept any number of keywords.
 def lift_adjustment(df : pd.DataFrame, threshold_1 : float, threshold_2 : float, threshold_3 : float, scale_1 : float, scale_2 : float, scale_3 : float):
+    """Applies scalar modification to lift value dataframe to reshape for MDS plot
+
+    Keyword arguments:
+    df -- (Pandas Dataframe)
+    threshold_1 -- (float) value determine which lift value to modify
+    threshold_2 -- (float) value determine which lift value to modify
+    scale_1 -- (float) value to modify lift value
+    scale_2 -- (float) value to modify lift value
+    Return: Dataframe with the rescaled/modified lift values
+    """
     col_names = [x for x in df.columns]
     new_arr = []
     for row in df.values:

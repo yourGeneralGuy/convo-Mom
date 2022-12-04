@@ -219,3 +219,74 @@ def plot_sentiments(posts_sentiments : pd.Dataframe):
 
     # Display the figure
     plt.show()
+
+def plot_sentiment_groups(convo_sentiments: np.array, resp_sentiments : np.array):
+    """ Creates a bar chart grouping the bot's and user sentiments to show visible difference.
+
+    Arguments:
+        convo_sentiments {numpy array} -- array of negative, neutral, positive, and compound scores (in that order) from the bot.
+        resp_sentiments {numpy array} -- (numpy array) array of negative, neutral, positive, and compound scores (in that order) from the user.
+    Returns: 
+        None
+    """
+    labels = ['Negative', 'Neutral', 'Positive', 'Compound']
+    x = np.arange(len(labels))
+    width = 0.35
+    fig, ax = plt.subplot()
+    rects1 = ax.bar(x - width/2, convo_sentiments, width, label='Bot\'s')
+    rects2 = ax.bar(x + width/2, resp_sentiments, width, label='User')
+
+    ax.set_ylabel('Percentage')
+    ax.set_title('Exchange Sentiments by Bot and User')
+    ax.set_xticks(x, labels)
+    ax.legend(loc='best')
+
+    ax.bar_label(rects1, padding=3)
+    ax.bar_label(rects2, padding=3)
+
+    fig.tight_layout()
+
+    plt.show()
+
+def plot_sentiment_over_exchange(convo_senti : pd.DataFrame, resp_senti : pd.DataFrame, time = None, subSentiments = False):
+    """Generates a plot that matches the change in sentiment over the span of the conversation.
+
+    Arguments:
+        convo_senti {pandas Dataframe} -- Negative, neutral, positive, and compound sentiment scores for the bot.
+        resp_senti {pandas Dataframe} -- Negative, neutral, positive, and compound sentiment scores for the user.
+        time {dateTime} -- Timestamps for the exchanges between the bot and the user (default: {None}).
+        subSentiments {bool} -- Indicate whether to plot Negative, neutral, and positive sentiment scores (default: {False}).
+    Return:
+        None
+    """
+
+    # Create the difference for across each exchange
+    convo_senti = convo_senti.apply(lambda x: x + 1)
+    resp_senti = resp_senti.apply(lambda x : x + 1)
+    diff_senti = convo_senti - resp_senti
+
+    # Construct the labels for the lines
+    labels = ['Negative', 'Neutral', 'Positive', 'Compound']
+
+    # Create the x-axis, time, to track exchanges over
+    if time is None:
+        time = np.arange(1, diff_senti.shape[0])
+    
+    # Create the figure
+    fig = plt.figure(figsize=(10, 8))
+    ax = plt.axes()
+
+    # Plot data based on passed booleans
+    if subSentiments is False:
+        plt.plot(time, diff_senti[labels[3]], fmt='ro', label=labels[3])
+        plt.legend(loc='best')
+        plt.xlabel('Time')
+        plt.ylabel('Difference in Compound score')
+    elif subSentiments is True:
+        markers = ['v', 'o', '^', 's']
+        colors = ['r', 'k', 'g', 'm']
+        package = []
+        for l, m, c in [(labels[0], markers[0], colors[0]), (labels[1], markers[1], colors[1]), (labels[2], markers[2], colors[2]), (labels[3], markers[3], colors[3])]:
+            plt.subplot()
+            plt.plot(time, diff_senti[labels[0]], label=l, marker=m, color=c)
+    plt.show()

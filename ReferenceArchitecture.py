@@ -164,3 +164,55 @@ def sentiment(series_text : pd.Series, series_topics : pd.Series):
     data = pd.DataFrame(data=data, columns=col_names)
     data.drop(index=0, inplace=True)
     return data
+
+
+"""_summary_
+"""
+def sentimentDialogue(series : pd.Series):
+    analyzer = SentimentIntensityAnalyzer()
+    headers = ["Post", "Negative", "Neutral", "Positive", "Compound"]
+    posts_sentiments = np.array([headers])
+    for post in series.apply(lambda x: x.lower()):
+        vs = analyzer.polarity_scores(post)
+        senti = np.array([
+            post,
+            vs['neg'],
+            vs['neu'],
+            vs['pos'],
+            vs['compound']
+        ])
+        posts_sentiments = np.row_stack((posts_sentiments, senti))
+    posts_sentiments = pd.DataFrame(data=posts_sentiments, columns=headers)
+    posts_sentiments.drop(axis=0, index=0, inplace=True)
+    avg_neg = np.average(posts_sentiments['Negative'])
+    avg_neu = np.average(posts_sentiments['Neutral'])
+    avg_pos = np.average(posts_sentiments['Positive'])
+    avg_comp = np.average(posts_sentiments['Compound'])
+    return posts_sentiments, avg_neg, avg_neu, avg_pos, avg_comp
+
+"""_summary_
+"""
+def plot_sentiments(posts_sentiments : pd.Dataframe):
+    # Visuallying the sentiments
+        # Reformatting for clarity
+    neg = posts_sentiments['Negative']
+    neu = posts_sentiments['Neutral']
+    pos = posts_sentiments['Positive']
+
+        # Creating the plot
+    fig_senti = plt.figure((20, 16))
+    ax = plt.axes(projection='3d')
+    m = ['o', '^', 's']
+    colors = ["Red", "Blue", "Green"]
+
+    ax.scatter(neg, neu, pos, c=colors, marker=m)
+
+    # Add graph info
+    ax.legend(loc='best')
+    ax.set_title("Cluster of Sentiment Scores")
+    ax.set_xlabel('Negative')
+    ax.set_ylabel('Neutral')
+    ax.set_zlabel('Positive')
+
+    # Display the figure
+    plt.show()

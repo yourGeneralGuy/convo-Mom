@@ -195,7 +195,7 @@ def sentimentDialogue(series : pd.Series):
 
 """_summary_
 """
-def plot_sentiments(posts_sentiments : pd.Dataframe):
+def plot_sentiments(posts_sentiments : pd.DataFrame):
     # Visuallying the sentiments
         # Reformatting for clarity
     neg = posts_sentiments['Negative']
